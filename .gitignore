@@ -1,0 +1,6 @@
+.DS_Store
+.idea
+BrowserStackLocal*
+node_modules
+server/test/bin
+site/bundle*

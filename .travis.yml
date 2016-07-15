@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+- '5.0'
+before_script:
+- npm start &
+- wget http://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
+- unzip BrowserStackLocal-linux-x64.zip
+- ./BrowserStackLocal $BROWSERSTACK_KEY -localIdentifier $TRAVIS_JOB_NUMBER &
+- sleep 10
+env:
+  global:
+  - secure: IKsVq7xmRs/1pJZ/pB3tbOITtbtcBFlBh3IIuhGkh72y0v8PTFfP/r/zlT/Gq5seAIaXN+YnbDPA61qroxGAGJdrsAB0xVae+AWRmBbHV64mq4g3kkj4RJPjv/2rAsTHEBpXPpmHdpjEDFIEqwTKWehZpJZAjLFoRS7LV5ucRc2LBNpfP3J83AJWn3KpBVnw5SBcwUbY8O8vKcaaYyfeorjMXqZ84Rw9jlDyhR8HJmRrvA/FVadg2lpzabFmQ5gBkLFzxEKghvIRkAJDQ1LMjYBmA6aogiJZoH90InRb6ub4KUrrmnYdbn0ug8YxDYXDa34fsBBnipUAYwSnwGujJmHHQ3rbcS12/S+cs75uFowBLP2ej6toznyUIwhfMX9rBFY6salo3jW3Qj7Qyy+68C3aqPLkJLCEgFHN2dGLR4BEoguycxSDoeIc5vj6j3c8uH/pP1Vp1jIRuaDglfyraIiwcZL5l4zznlnaqCOvTG6hJKZHgz1MCxaaCQjCdsKtMjFnmz8aocxmJbW+0BazAhEbbPvUsagKrq0K91bmXKWaplvuo1jhqWOIlkW3L6eNX5880or+BergkjXufnZFLm6soaBdP1/aRN1fBgDPRuPcEh+gHbiSa3A1Y3Fsrx+eAz8mnkyqoXlAvQTPq8XBkIoUyoYWtzWpDp3CAVPGJmg=
+  - secure: RyXfo5jJrjlcedkk2k5ceT7KeuqdXaqRzREHMFI/FIJy/dkIpFQ2mD/HVF/SO7V/8hcsfA4TBIPb7Qlitl+5NZEgo3TlNpoxML9+jMrzBEnSafiqu1lJrg4z3+D4TtfjTi2ccI9wqhUeYiuPWmdFBgsqgRvFxMgbDLC0KJipsk12PYKCMzV+2+INBxx6SulBlPWS8RMMQeD0kY9JBMyxabZ5E3LtA9ALDedSW/C4qj6H4bchTSU1Vh7UcMOrCypfKGNv4halfoSfgIzZuSpWsnKGMz0RXiPwfUI9UHymA9vwToIzBgk+ZFlRqzIF69ex6llKTMgJARyat5xGmbLFN12u8YhAMde8SxSArNL4s5x1WUFK04OzagYEzPVRniJYK3pEVI0SGQPwWo6l85JUGT0iT4abn4MQRNwVhtHhqv55tMoJ7DlRujoKCa7bqQh/Okqw294Y/mFWMz6pENlT1p4JU5wERdL3Dtf2kHIpBMqRiEP/stHvkKcsRpUugW+4EbZDGyhVEOUnPUM4ZK/SvEqvg3foOSQdnBzrrc46KhBQ2Rh3l0Qyc/sOLXk/LrGmfKINU2wbNZqcpMRY5bjoEpAxRoEWO+mn+Cpfl8JRIfwN6VN88lHVGOvNlOjcdmo0wNhifDFSpTItIvpDZNW93zaIfZacBt0X2R7oqbiApXE=
+  matrix:
+  - BROWSER: Firefox
+    PLATFORM: Win8
+    VERSION: 41
+  - BROWSER: Chrome
+    PLATFORM: Win8
+    VERSION: 46
+  - BROWSER: Safari
+    PLATFORM: Mac
+    VERSION: 9
