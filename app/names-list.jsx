@@ -37,7 +37,7 @@ const NamesList = React.createClass({
         var names = Falcor.keys(this.state.names)
             .map(idx => {
                 return (
-                    <NameItem key={idx} id={this.state.names[idx].id} name={this.state.names[idx].name} 
+                    <NameItem key={idx} keyx={idx} id={this.state.names[idx].id} name={this.state.names[idx].name}
                               onDelete={this.handleNameDelete} onEdit={this.handleNameEdit}/>
                 )
             });

@@ -17,8 +17,13 @@ const NameItem = React.createClass({
     handleEdit(event){
         var input = this.refs.input;
         console.log("Editing " + this.props.id + " name to " + input.value);
-        model.call(['names', 'edit'], [this.props.id, input.value], ["id", "name"])
-            .then(() => {
+        // model.call(['names', 'edit'], [this.props.id, input.value], ["id", "name"])
+        //     .then(() => {
+        //         this.setState({mode: 'view'});
+        //         this.props.onEdit();
+        //     });
+        model.setValue(['names', this.props.keyx, 'name'], input.value)
+            .then((done) => {
                 this.setState({mode: 'view'});
                 this.props.onEdit();
             });
@@ -39,7 +44,7 @@ const NameItem = React.createClass({
     },
     render() {
         return (
-            <tr key={this.props.idx}>
+            <tr key={this.props.keyx}>
                 <td width="25px">{this.props.id}</td>
                 <td width="100px">
                     {this.showNameField()}

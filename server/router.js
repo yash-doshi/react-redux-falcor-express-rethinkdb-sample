@@ -31,6 +31,18 @@ var NamesRouter = Router.createClass([
         }
     },
     {
+        route: 'names[{integers:index}].name',
+        set: (jsonGraphArg) => {
+            console.log(JSON.stringify(jsonGraphArg));
+            return Object.keys(jsonGraphArg.names).map(function(index){
+                names[index].name = jsonGraphArg.names[index].name;
+                return {
+                    path: ['names', index, 'name'], value: names[index]
+                }
+            });
+        }
+    },
+    {
         route: 'names.add',
         call: (callPath, args, pathSet) => {
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
