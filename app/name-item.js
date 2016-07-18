@@ -1,6 +1,10 @@
 import React from 'react'
 import model from './model.js'
 
+import {TableRow, TableRowColumn} from 'material-ui/Table';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 
 const NameItem = React.createClass({
     getInitialState() {
@@ -16,13 +20,8 @@ const NameItem = React.createClass({
     },
     handleEdit(event){
         var input = this.refs.input;
-        console.log("Editing " + this.props.id + " name to " + input.value);
-        // model.call(['names', 'edit'], [this.props.id, input.value], ["id", "name"])
-        //     .then(() => {
-        //         this.setState({mode: 'view'});
-        //         this.props.onEdit();
-        //     });
-        model.setValue(['names', this.props.keyx, 'name'], input.value)
+        console.log("Editing " + this.props.id + " name to " + input.getValue());
+        model.setValue(['names', this.props.keyx, 'name'], input.getValue())
             .then((done) => {
                 this.setState({mode: 'view'});
                 this.props.onEdit();
@@ -35,8 +34,8 @@ const NameItem = React.createClass({
         if(this.state.mode === 'editing'){
             return (
                 <div>
-                    <input ref="input" defaultValue={this.props.name}></input>
-                    <button onClick={this.handleEdit}>Save</button>
+                    <TextField defaultValue={this.props.name} ref="input" id={this.props.keyx + '_save_button'}/>
+                    <FlatButton label="save" onClick={this.handleEdit}/>
                 </div>
             )
         }
@@ -44,18 +43,18 @@ const NameItem = React.createClass({
     },
     render() {
         return (
-            <tr key={this.props.keyx}>
-                <td width="25px">{this.props.id}</td>
-                <td width="100px">
+            <TableRow key={this.props.keyx}>
+                <TableRowColumn width="25px">{this.props.id}</TableRowColumn>
+                <TableRowColumn width="100px">
                     {this.showNameField()}
-                </td>
-                <td width="50px">
-                    <button onClick={this.handleEditStart}>Edit</button>
-                </td>
-                <td width="50px">
-                    <button onClick={this.handleDelete}>Delete</button>
-                </td>
-            </tr>
+                </TableRowColumn>
+                <TableRowColumn width="50px">
+                    <RaisedButton label="Edit" primary={true} onClick={this.handleEditStart}/>
+                </TableRowColumn>
+                <TableRowColumn width="50px">
+                    <RaisedButton label="Delete" secondary={true} onClick={this.handleDelete}/>
+                </TableRowColumn>
+            </TableRow>
         )
     }
 });

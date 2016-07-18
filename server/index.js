@@ -5,10 +5,8 @@ var FalcorServer = require('falcor-express'),
     NamesRouter = require('./router'),
     path = require('path');
 
-
 var PORT = parseInt(process.env.PORT) || 8080;
 var serverMode = process.env.server || 'both';
-console.log(serverMode);
 if(serverMode === "both" || serverMode === "express" ) {
 
     app.use(bodyParser.urlencoded({extended: false}));

@@ -3,6 +3,8 @@ import Falcor from 'falcor'
 import model from './model.js'
 import NameItem from './name-item'
 
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
+
 
 const NamesList = React.createClass({
     /*componentDidMount: function() {
@@ -42,16 +44,18 @@ const NamesList = React.createClass({
                 )
             });
         return (
-            <table>
-                <thead>
-                <th> ID </th>
-                <th> Name </th>
-                <th colSpan="2"> Action </th>
-                </thead>
-                <tbody>
+            <Table selectable={false}>
+                <TableHeader displaySelectAll={false}>
+                <TableRow>
+                    <TableHeaderColumn> ID </TableHeaderColumn>
+                    <TableHeaderColumn> Name </TableHeaderColumn>
+                    <TableHeaderColumn columnNumber={2}> Action </TableHeaderColumn>
+                </TableRow>
+                </TableHeader>
+                <TableBody stripedRows={true}>
                 {names}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         )
     }
 });

@@ -1,25 +1,44 @@
 import React from 'react';
 import model from './model'
+import Paper from 'material-ui/Paper';
+import TextField from 'material-ui/TextField';
+import FlatButton from 'material-ui/FlatButton';
+
 
 export default React.createClass({
+    getInitialState() {
+        return {name: ''}
+    },
     handleSubmit(event) {
         event.preventDefault();
 
-        var input = this.refs.input;
+        var input = this.state.name;
+        console.log(input);
 
-        model.call(['names', 'add'], [input.value], ["name"])
+        model.call(['names', 'add'], [input], ["name"])
             .then(() => {
-                input.value = null;
-                input.focus();
-                this.props.onAdded()
+                this.setState({
+                    name: ''
+                });
+                this.props.onAdded();
+        })
+    },
+    handleInputChange(event) {
+        this.setState({
+            name: event.target.value
         })
     },
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <input ref="input"/>
-                <button> Add Name </button>
-            </form>
+            <div>
+
+                <form onSubmit={this.handleSubmit}>
+                    <TextField value={this.state.name} onChange={this.handleInputChange}/>
+                    <FlatButton label="Add" primary={true}  type="submit"/>
+                </form>
+            </div>
+
+
         )
     }
 
