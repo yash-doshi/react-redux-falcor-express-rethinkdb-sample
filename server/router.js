@@ -1,44 +1,88 @@
 var Router = require('falcor-router'),
-    names = require('./names');
+    names = require('./names'),
+    NameModel = require('./NameModel');
+
+var jsonGraph = require('falcor-json-graph');
+var $ref = jsonGraph.ref;
+var $error = jsonGraph.error;
 
 var NamesRouter = Router.createClass([
     {
-        route: 'names[{integers:nameIndexes}]["name", "id"]',
+        route: 'namelist.length',
+        get: (pathSet) => {
+            console.log(JSON.stringify(pathSet));
+            return NameModel.getLength().then(function(length){
+                return {
+                    path: ['namelist', 'length'], value: names.length
+                }
+            })
+        }
+    },
+    {
+        route: 'namelist[{integers:listIndices}]',
+        get: (pathSet) => {
+            console.log(JSON.stringify(pathSet));
+            return NameModel.customizedNameListForUser(undefined).then((ids) => {
+                var pathValues = [];
+                pathSet.listIndices.forEach(function(index){
+                    if(ids[index]){
+                        pathValues.push({
+                            path: ['namelist', index],
+                            value: $ref(['namesById', ids[index]])
+                        })
+                    }
+                });
+                return pathValues;
+            });
+        }
+    },
+    {
+        route: 'namesById[{integers:nameIndexes}]["name", "id"]',
         get: (pathSet) => {
             console.log(JSON.stringify(pathSet));
             var keys = pathSet[2];
             var results = [];
-            pathSet.nameIndexes.forEach(nameIndex => {
-                if (names.length > nameIndex) {
-                    keys.forEach((key) =>{
-                        results.push({
-                            path: ['names', nameIndex, key],
-                            value: names[nameIndex][key]
+
+            return NameModel.getById(pathSet.nameIndexes).then(names => {
+                pathSet.nameIndexes.forEach(nameIndex => {
+                    var index = names.map(name => name.id).indexOf(nameIndex);
+                    if (index > -1) {
+                        keys.forEach((key) =>{
+                            if(names[index][key]){
+                                results.push({
+                                    path: ['namesById', nameIndex, key],
+                                    value: names[index][key]
+                                });
+                            } else {
+                                results.push({
+                                    path: ['namesById', nameIndex, key],
+                                    value: null
+                                });
+                            }
                         });
-                    });
-                }
+                    } else {
+                        results.push({
+                            path: ['namesById', nameIndex],
+                            value: null
+                        });
+                    }
+                });
+                return results;
             });
-            return results;
         }
     },
     {
-        route: 'names.length',
-        get: (pathSet) => {
-            console.log(JSON.stringify(pathSet));
-            return {
-                path: ['names', 'length'], value: names.length
-            }
-        }
-    },
-    {
-        route: 'names[{integers:index}].name',
+        route: 'namesById[{integers:ids}].name',
         set: (jsonGraphArg) => {
             console.log(JSON.stringify(jsonGraphArg));
-            return Object.keys(jsonGraphArg.names).map(function(index){
-                names[index].name = jsonGraphArg.names[index].name;
-                return {
-                    path: ['names', index, 'name'], value: names[index]
-                }
+            idNameObjects = Object.keys(jsonGraphArg.namesById)
+                                    .map(id => { return { id: parseInt(id), name: jsonGraphArg.namesById[id].name } });
+            return NameModel.updateNames(idNameObjects).then(result => {
+                return result.map(result => {
+                    return {
+                        path: ['namesById', result.id, 'name'], value: result.name
+                    }
+                });
             });
         }
     },

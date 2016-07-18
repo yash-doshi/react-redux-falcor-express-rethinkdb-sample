@@ -1,6 +1,5 @@
 import React from 'react';
 import model from './model'
-import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 

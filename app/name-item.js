@@ -21,7 +21,7 @@ const NameItem = React.createClass({
     handleEdit(event){
         var input = this.refs.input;
         console.log("Editing " + this.props.id + " name to " + input.getValue());
-        model.setValue(['names', this.props.keyx, 'name'], input.getValue())
+        model.setValue(['namelist', this.props.keyx, 'name'], input.getValue())
             .then((done) => {
                 this.setState({mode: 'view'});
                 this.props.onEdit();
@@ -34,7 +34,7 @@ const NameItem = React.createClass({
         if(this.state.mode === 'editing'){
             return (
                 <div>
-                    <TextField defaultValue={this.props.name} ref="input" id={this.props.keyx + '_save_button'}/>
+                    <TextField defaultValue={this.props.name} ref="input" id={this.props.keyx + '_save_button'} autoFocus/>
                     <FlatButton label="save" onClick={this.handleEdit}/>
                 </div>
             )

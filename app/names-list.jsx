@@ -19,10 +19,10 @@ const NamesList = React.createClass({
     },
 
     update() {
-        model.getValue(['names', 'length'])
-            .then(length => model.get(['names', {from: 0, to: length-1}, ['name','id']]))
+        model.getValue(['namelist', 'length'])
+            .then(length => model.get(['namelist', {from: 0, to: length-1}, ['name','id']]))
             .then(response => {
-                this.setState({names: response.json.names})
+                this.setState({names: response.json.namelist})
             })
     },
 
@@ -35,7 +35,6 @@ const NamesList = React.createClass({
     },
 
     render() {
-        console.log(Falcor.keys(this.state.names));
         var names = Falcor.keys(this.state.names)
             .map(idx => {
                 return (
