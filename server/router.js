@@ -103,10 +103,13 @@ var NamesRouter = Router.createClass([
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
             var id = parseInt(args[0]);
             return NameModel.delete(id).then(() => {
-                return [
-                    { path: ['namelist', 'length'] },
-                    { path: ['namesById', id], value: null }
-                ]
+                return NameModel.getLength().then(function(length){
+                    return [
+                        { path: ['namelist', 'length'], value: length },
+                        { path: ['namesById', id], invalidated: true },
+                        { path: ['namelist', {from: 0, to: length-1}], invalidated: true }
+                    ]
+                });
             });
         }
     }

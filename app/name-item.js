@@ -1,5 +1,5 @@
 import React from 'react'
-import model from './model.js'
+import NameModel from './NameModel.js'
 
 import {TableRow, TableRowColumn} from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -12,8 +12,7 @@ const NameItem = React.createClass({
     },
     handleDelete(event) {
         console.log("Deleting " + this.props.id);
-        model.call(['names', 'delete'], [this.props.id], ["id"])
-            .then(() => { this.props.onDelete(); });
+        NameModel.delete(this.props.id).then(() => { this.props.onDelete(); });
     },
     handleEditStart(event){
         this.setState({mode: 'editing'});
@@ -21,8 +20,10 @@ const NameItem = React.createClass({
     handleEdit(event){
         var input = this.refs.input;
         console.log("Editing " + this.props.id + " name to " + input.getValue());
-        model.setValue(['namelist', this.props.keyx, 'name'], input.getValue())
-            .then((done) => {
+        // model.setValue(['namelist', this.props.keyx, 'name'], input.getValue())
+        NameModel
+            .edit(this.props.keyx, input.getValue())
+            .then(() => {
                 this.setState({mode: 'view'});
                 this.props.onEdit();
             });
@@ -43,7 +44,7 @@ const NameItem = React.createClass({
     },
     render() {
         return (
-            <TableRow key={this.props.keyx}>
+            <TableRow>
                 <TableRowColumn width="25px">{this.props.id}</TableRowColumn>
                 <TableRowColumn width="100px">
                     {this.showNameField()}

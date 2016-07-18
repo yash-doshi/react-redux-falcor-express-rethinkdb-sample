@@ -45,7 +45,6 @@ module.exports = {
     delete: (id) => {
         return new Promise(function(resolve, reject) {
             names = names.filter((name)=> {return name.id !== id});
-            console.log(names);
             resolve();
         } );
     }

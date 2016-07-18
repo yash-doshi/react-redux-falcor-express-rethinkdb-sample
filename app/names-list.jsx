@@ -1,10 +1,11 @@
 import React from 'react'
 import Falcor from 'falcor'
-import model from './model.js'
+import NameModel from './NameModel.js'
 import NameItem from './name-item'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
 
+// var nameModel = NameModel();
 
 const NamesList = React.createClass({
     /*componentDidMount: function() {
@@ -19,11 +20,7 @@ const NamesList = React.createClass({
     },
 
     update() {
-        model.getValue(['namelist', 'length'])
-            .then(length => model.get(['namelist', {from: 0, to: length-1}, ['name','id']]))
-            .then(response => {
-                this.setState({names: response.json.namelist})
-            })
+        NameModel.getAll().then(list => { this.setState({names: list}) });
     },
 
     handleNameDelete() {
@@ -38,7 +35,7 @@ const NamesList = React.createClass({
         var names = Falcor.keys(this.state.names)
             .map(idx => {
                 return (
-                    <NameItem key={idx} keyx={idx} id={this.state.names[idx].id} name={this.state.names[idx].name}
+                    <NameItem key={this.state.names[idx].id} keyx={idx} id={this.state.names[idx].id} name={this.state.names[idx].name}
                               onDelete={this.handleNameDelete} onEdit={this.handleNameEdit}/>
                 )
             });
