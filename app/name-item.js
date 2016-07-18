@@ -11,7 +11,7 @@ const NameItem = React.createClass({
         return {mode: 'view'}
     },
     handleDelete(event) {
-        console.log("Deleting " + this.props.id + " name");
+        console.log("Deleting " + this.props.id);
         model.call(['names', 'delete'], [this.props.id], ["id"])
             .then(() => { this.props.onDelete(); });
     },

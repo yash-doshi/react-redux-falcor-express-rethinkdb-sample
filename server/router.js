@@ -1,5 +1,4 @@
 var Router = require('falcor-router'),
-    names = require('./names'),
     NameModel = require('./NameModel');
 
 var jsonGraph = require('falcor-json-graph');
@@ -13,7 +12,7 @@ var NamesRouter = Router.createClass([
             console.log(JSON.stringify(pathSet));
             return NameModel.getLength().then(function(length){
                 return {
-                    path: ['namelist', 'length'], value: names.length
+                    path: ['namelist', 'length'], value: length
                 }
             })
         }
@@ -91,18 +90,11 @@ var NamesRouter = Router.createClass([
         call: (callPath, args, pathSet) => {
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
             var newName = args[0];
-            var newId = names[names.length-1].id + 1;
-            names.push({id: newId, name: newName});
-            return [
-                {
-                    path: ['names', names.length-1, ['name', 'id']],
-                    // value: newName
-                },
-                {
-                    path: ['names', 'length'],
-                    value: names.length
-                }
-            ]
+            return NameModel.addName(newName).then(() => {
+                return [
+                    { path: ['namelist', 'length'] }
+                ]
+            });
         }
     },
     {
@@ -110,32 +102,12 @@ var NamesRouter = Router.createClass([
         call: (callPath, args, pathSet) => {
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
             var id = parseInt(args[0]);
-            names = names.filter((name)=> {return name.id !== id});
-            return [
-                {
-                    path: ['names', {from:0, to:names.length}, ['id', 'name']]
-                },
-                {
-                    path: ['names', 'length'],
-                    value: names.length
-                }
-            ]
-        }
-    },
-    {
-        route: 'names.edit',
-        call: (callPath, args, pathSet) => {
-            console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
-            var id = parseInt(args[0]);
-            var name = args[1];
-            var index = -1;
-            names.forEach(function(name, i){ if(name.id === id){index = i}});
-            if (index == -1){
-                return []
-            } else{
-                names[index].name = name;
-                return [ { path: ['names', index, ['name']] } ]
-            }
+            return NameModel.delete(id).then(() => {
+                return [
+                    { path: ['namelist', 'length'] },
+                    { path: ['namesById', id], value: null }
+                ]
+            });
         }
     }
 ]);

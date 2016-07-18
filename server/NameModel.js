@@ -34,6 +34,20 @@ module.exports = {
             });
             resolve(results);
         } );
+    },
+    addName: (name) => {
+        return new Promise(function(resolve, reject) {
+            var newId = names[names.length-1].id + 1; // use uuid in future
+            names.push({id: newId, name: name});
+            resolve();
+        } );
+    },
+    delete: (id) => {
+        return new Promise(function(resolve, reject) {
+            names = names.filter((name)=> {return name.id !== id});
+            console.log(names);
+            resolve();
+        } );
     }
     
 };
