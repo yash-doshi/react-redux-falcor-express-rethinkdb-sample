@@ -50,7 +50,7 @@ const NameItem = React.createClass({
                     {this.showNameField()}
                 </TableRowColumn>
                 <TableRowColumn width="50px">
-                    <RaisedButton label="Edit" primary={true} onClick={this.handleEditStart}/>
+                    <RaisedButton label="Edit" primary={true} onClick={this.handleEditStart} disabled={true}/>
                 </TableRowColumn>
                 <TableRowColumn width="50px">
                     <RaisedButton label="Delete" secondary={true} onClick={this.handleDelete}/>

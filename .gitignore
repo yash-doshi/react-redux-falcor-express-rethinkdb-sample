@@ -4,3 +4,4 @@ BrowserStackLocal*
 node_modules
 server/test/bin
 site/bundle*
+rethinkdb_data
