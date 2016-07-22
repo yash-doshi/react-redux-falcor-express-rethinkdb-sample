@@ -7,7 +7,7 @@ import TextField from 'material-ui/TextField';
 
 const NameItem = React.createClass({
     handleEdit(event){
-        var value = this.ref.input.getValue();
+        var value = this.refs.input.getValue();
         if(!value.trim()) return;
         this.props.onEdit(this.props.nameObj.id, value);
     },

@@ -2,12 +2,17 @@ import { Model } from 'falcor';
 import HttpDataSource from 'falcor-http-datasource';
 import Promise from 'promise';
 
-
 const model = new Model({
     source: new HttpDataSource('/model.json')
 });
 
+
 var NameModel = new function() {
+    this.test = () => {
+        model.get(['namesById', '23']).then((res) => {console.log(res)});
+    };
+    
+    
     this.getLength = () => {
         return model.getValue(['namelist', 'length'])
     };
@@ -44,4 +49,4 @@ var NameModel = new function() {
 
 };
 
-module.exports = NameModel;
+export default NameModel;

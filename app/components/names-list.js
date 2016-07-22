@@ -18,7 +18,7 @@ const namesList = React.createClass({
             <NameItem key={name.id} nameObj={name} 
                       onDelete={()=>{this.props.deleteName(name.id)}}
                       onEditStart={()=>{this.props.editNameStart(name.id)}}
-                      onEdit={this.props.editNameStart}
+                      onEdit={this.props.editName}
                       onAddToList={()=>{this.props.addNameToList(name.id)}}
                       onremoveFromList={()=>{this.props.removeNameFromList(name.id)}}
             /> 

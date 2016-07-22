@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
-import { deleteName, editNameStart, editName, addNameToList, removeNameFromList } from '../actions/index'
+import { deleteNameAsync, editNameStart, editNameAsync, addNameToList, removeNameFromList } from '../actions/index'
 import namesList from '../components/names-list'
+import NameModel from '../NameModelLocal'
 
 const generateUINameObjs = (names, namelist) => {
     return names.map( (name) => {
@@ -30,13 +31,13 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         deleteName: (id) => {
-            dispatch(deleteName(id));
+            dispatch(deleteNameAsync(id)).then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
         },
         editNameStart: (id) => {
             dispatch(editNameStart(id));
         },
         editName: (id, name) => {
-            dispatch(editName(id, name))
+            dispatch(editNameAsync(id, name)).then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
         },
         addNameToList: (id) => {
             dispatch(addNameToList(id));
