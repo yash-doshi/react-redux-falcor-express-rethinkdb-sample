@@ -1,27 +1,25 @@
-import React from 'react';
-import NameModel from './NameModel.js'
+import React, { PropTypes as T} from 'react';
 
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 
 
 export default React.createClass({
+    propTypes: {
+        addName: T.func.isRequired // will be provided by react-redux
+    },
     getInitialState() {
         return {name: ''}
+    },
+    handleInputChange(event) {
+        this.setState({ name: event.target.value })
     },
     handleSubmit(event) {
         event.preventDefault();
         var input = this.state.name;
         console.log("adding "+ input);
-        NameModel.add(input).then(() => {
-            this.setState({ name: '' });
-            this.props.onAdded();
-        });
-    },
-    handleInputChange(event) {
-        this.setState({
-            name: event.target.value
-        })
+        this.props.addName(input);
+        this.setState({name: ''});
     },
     render() {
         return (

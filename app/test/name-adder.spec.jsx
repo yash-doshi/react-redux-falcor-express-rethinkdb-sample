@@ -1,6 +1,6 @@
 var React = require('react'),
     ReactDom = require('react-dom'),
-    NameAdder = require('../name-adder.jsx'),
+    NameAdder = require('../components/name-adder.js'),
     Falcor = require('falcor'),
     TestUtils = require('react/lib/ReactTestUtils')
 

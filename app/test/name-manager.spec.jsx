@@ -1,6 +1,6 @@
 var React = require('react'),
     TestUtils = require('react/lib/ReactTestUtils'),
-    NameManager = require('../name-manager.jsx')
+    NameManager = require('../components/name-manager.js')
 
 describe('NameManager', () => {
     it('updates NamesList when new name is added', (done) => {

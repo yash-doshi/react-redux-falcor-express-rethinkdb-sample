@@ -1,6 +1,6 @@
 var React = require('react'),
     TestUtils = require('react/lib/ReactTestUtils'),
-    NamesList = require('../names-list.jsx'),
+    NamesList = require('../components/names-list.js'),
     Falcor = require('falcor')
 
 describe('NamesList', () => {
