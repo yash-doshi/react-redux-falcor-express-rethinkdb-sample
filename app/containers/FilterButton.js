@@ -5,7 +5,7 @@ import simpleButton from '../components/simpleButton'
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        disabled: ownProps.filter === state.visibilityFilter
+        disabled: ownProps.filter === state.get('visibilityFilter')
     }
 };
 

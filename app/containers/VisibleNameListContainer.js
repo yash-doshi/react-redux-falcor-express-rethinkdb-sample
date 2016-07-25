@@ -1,21 +1,15 @@
 import { connect } from 'react-redux'
 import { deleteNameAsync, editNameStart, editNameAsync, addNameToList, removeNameFromList } from '../actions/index'
 import namesList from '../components/names-list'
-import NameModel from '../NameModelLocal'
+import NameModel from '../NameModel'
 
-const generateUINameObjs = (names, namelist) => {
-    return names.map( (name) => {
-        return {...name, inYourList: namelist.indexOf(name.id) > -1 };
-        // return Object.assign({}, name, {inYourList: namelist.indexOf(name.id) > -1})
-    })
-};
 
 const filterVisibleNames = (state) => {
-    var filter = state.visibilityFilter;
-    var nameObjs = generateUINameObjs(state.names, state.namelist);
+    var filter = state.get('visibilityFilter');
+    var nameObjs = state.get('names');
     switch (filter) {
         case 'MY_LIST':
-            return nameObjs.filter(nameObj => nameObj.inYourList);
+            return nameObjs.filter(nameObj => {return nameObj.get('inYourList')});
         case 'SHOW_ALL':
         default:
             return nameObjs;
@@ -31,13 +25,13 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         deleteName: (id) => {
-            dispatch(deleteNameAsync(id)).then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
+            dispatch(deleteNameAsync(id))//.then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
         },
         editNameStart: (id) => {
             dispatch(editNameStart(id));
         },
         editName: (id, name) => {
-            dispatch(editNameAsync(id, name)).then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
+            dispatch(editNameAsync(id, name))//.then(()=>{NameModel.getAll().then((res) => {console.log(res)})});
         },
         addNameToList: (id) => {
             dispatch(addNameToList(id));

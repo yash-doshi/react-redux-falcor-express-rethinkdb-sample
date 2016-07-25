@@ -1,11 +1,13 @@
 import React, { PropTypes as T} from 'react'
+import {List} from 'immutable'
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
+
 import NameItem from './name-item'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow} from 'material-ui/Table';
 
 const namesList = React.createClass({
     propTypes: {
-        names: T.array.isRequired, // will be provided by react-redux
+        names: T.instanceOf(List).isRequired, // will be provided by react-redux
         // redux action hookups, set up below
         deleteName: T.func.isRequired,
         editNameStart: T.func.isRequired,
@@ -14,15 +16,18 @@ const namesList = React.createClass({
         removeNameFromList: T.func.isRequired
     },
     render() {
-        var names = this.props.names.map(name => { return ( 
-            <NameItem key={name.id} nameObj={name} 
-                      onDelete={()=>{this.props.deleteName(name.id)}}
-                      onEditStart={()=>{this.props.editNameStart(name.id)}}
-                      onEdit={this.props.editName}
-                      onAddToList={()=>{this.props.addNameToList(name.id)}}
-                      onremoveFromList={()=>{this.props.removeNameFromList(name.id)}}
-            /> 
-        ) });
+        var names = this.props.names.map(name => {
+            var id = name.get('id');
+            return (
+                <NameItem key={id} nameObj={name}
+                          onDelete={()=>{this.props.deleteName(id)}}
+                          onEditStart={()=>{this.props.editNameStart(id)}}
+                          onEdit={this.props.editName}
+                          onAddToList={()=>{this.props.addNameToList(id)}}
+                          onremoveFromList={()=>{this.props.removeNameFromList(id)}}
+                />
+            ) 
+        });
         return (
             <Table selectable={false}>
                 <TableHeader displaySelectAll={false}>

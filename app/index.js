@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import ReduxThunk from 'redux-thunk'
+import Immutable from 'immutable';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -12,16 +13,15 @@ injectTapEventPlugin();
 
 import MainReducer from './reducers/index'
 import MainContainer from './components/MainContainer'
-import NameModel from './NameModelLocal'
-
+import NameModel from './NameModel'
 
 var onLoad = (data) => {
-    var names = data.names;
-    let store = createStore(MainReducer, {
+    var initialState = {
         visibilityFilter: 'SHOW_ALL',
-        namelist: [],
-        names: names
-    },
+        names: data.names
+    };
+    var imInitialState = Immutable.fromJS(initialState);
+    let store = createStore(MainReducer, imInitialState,
         applyMiddleware(ReduxThunk)
     );
     const App = () => (

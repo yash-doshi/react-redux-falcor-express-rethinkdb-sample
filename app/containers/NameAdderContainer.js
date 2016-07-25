@@ -2,12 +2,12 @@ import { connect } from 'react-redux'
 import { addNameAsync } from '../actions/index'
 import nameAdder from '../components/name-adder'
 import uuid from 'node-uuid';
-import NameModel from '../NameModelLocal'
+import NameModel from '../NameModel'
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         addName: (name) => {
-            dispatch(addNameAsync(uuid.v4(), name)).then(()=>{NameModel.getAll().then((res) => {console.log(res)})})
+            dispatch(addNameAsync(name))//.then(()=>{NameModel.getAll().then((res) => {console.log(res)})})
         }
     }
 };

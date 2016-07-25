@@ -25,7 +25,7 @@ export default React.createClass({
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
-                    <TextField value={this.state.name} onChange={this.handleInputChange}/>
+                    <TextField value={this.state.name} onChange={this.handleInputChange} id="name-added-input"/>
                     <FlatButton label="Add" primary={true}  type="submit"/>
                 </form>
             </div>

@@ -1,13 +1,20 @@
-import names from './names'
-import namelist from './namelist'
-import visibilityFilter from './visibilityFilter'
-
+import Immutable from 'immutable';
 import { combineReducers } from 'redux'
 
-const MainReducer = combineReducers({
+import names from './names'
+import visibilityFilter from './visibilityFilter'
+
+const MainReducerOld = combineReducers({
     visibilityFilter: visibilityFilter,
-    names: names,
-    namelist: namelist
+    names: names
 });
+
+function MainReducer(state , action) {
+    return Immutable.Map({
+        visibilityFilter: visibilityFilter(state.get('visibilityFilter'), action),
+        names: names(state.get('names'), action)
+    })
+}
+
 
 export default MainReducer

@@ -86,6 +86,25 @@ var DBWrapper = new function() {
         this.getByCustomFilter(table, r.row(key).eq(value), callback);
     };
 
+    
+    // Example: modifier = {filter: {userId: 101}, orderBy:{'name'}, getOnlyCount: true}
+    this.getByAnything = (table, modifier, callback) => {
+        this.init().then((connection) => {
+
+            var query = r.table(table);
+            if(modifier.filter) query = query.filter(modifier.filter);
+            if(modifier.orderBy) query = query.orderBy({index: r.desc(modifier.orderBy)});
+            if(modifier.limit) query = query.limit(modifier.limit);
+            if(modifier.pluck) query = query.pluck(modifier.pluck);
+            if(modifier.getOnlyCount) query = query.count();
+
+            query.run(connection, function(err, cursorOrResult) {
+                if(modifier.getOnlyCount) resultCallback(err, cursorOrResult, callback);
+                else cursorCallback(err, cursorOrResult, callback);
+            });
+        });
+    };
+
     // endregion
 
 
@@ -130,6 +149,8 @@ var DBWrapper = new function() {
     };
 
     // endregion
+
+
     
 };
 

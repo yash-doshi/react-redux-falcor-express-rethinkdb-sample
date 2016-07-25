@@ -1,20 +1,43 @@
 import * as actionConstants from './constants';
+import Promise from 'promise'
+import NameModel from '../NameModel'
 
-import NameModel from '../NameModelLocal'
 
-
-export const addNameAsync = (id, name) => {
-    return (dispatch) => {
-        return NameModel.add(id, name).then(() => {dispatch(addName(id,name))})
+export const replaceNameList = (updatedList) => {
+    return {
+        type: actionConstants.NAME_UPDATE_LIST,
+        updatedList: updatedList
     }
 };
-export const addName = (id, name) => {
+
+//Strictly to be used while creating new object
+export const replaceId = (tempId, id) => {
+    return{
+        type: actionConstants.NAME_REPLACE_ID,
+        tempId,
+        id
+    };
+};
+
+export const addNameAsync = (name) => {
+    return (dispatch) => {
+        var tempId = 'tttemp';
+        dispatch(addName(tempId, name));
+        return NameModel.add(name).then((id) => {
+            // console.log(id);
+            // setTimeout(()=>{dispatch(replaceId(tempId, id));}, 2000);
+            dispatch(replaceId(tempId, id));
+        })
+    }
+};
+export const addName = (tempId, name) => {
     return{
         type: actionConstants.NAME_ADD,
         nameObj: {
             name: name,
-            id: id,
-            editing: false
+            id: tempId,
+            editing: false,
+            inYourList: false
         }
     };
 };
@@ -22,8 +45,13 @@ export const addName = (id, name) => {
 
 export const deleteNameAsync = (id) => {
     return (dispatch) => {
-        return NameModel.delete(id, name).then(() => { dispatch(deleteName(id) )})
-    }
+        dispatch(deleteName(id));
+        return NameModel.delete(id).then((updatedList) => {
+            console.log(updatedList);
+            // setTimeout(()=>{dispatch(replaceNameList(updatedList));}, 3000);
+            // dispatch(replaceNameList(updatedList));
+        })
+    };
 };
 export const deleteName = (id) => {
     return{
@@ -38,13 +66,10 @@ export const deleteName = (id) => {
 export const editNameAsync = (id, newName) => {
     return (dispatch) => {
         dispatch(editName(id, newName));
-        return NameModel.edit(id, newName).then( ()=> { Promise.resolve()/* Do nothing here*/ },
+        return NameModel.edit(id, newName).then( ()=> { return Promise.resolve(); },
             (error) => {
                 console.log(error);
-                //Handle Failure
-
-                //Undo the sent dispatch or refresh the list and show error message
-
+                
             }
         )
     }

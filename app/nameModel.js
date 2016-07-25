@@ -8,10 +8,6 @@ const model = new Model({
 
 
 var NameModel = new function() {
-    this.test = () => {
-        model.get(['namesById', '23']).then((res) => {console.log(res)});
-    };
-    
     
     this.getLength = () => {
         return model.getValue(['namelist', 'length'])
@@ -21,9 +17,12 @@ var NameModel = new function() {
     this.getList = (indices) => {
         return new Promise(function(resolve, reject) {
             model
-                .get(['namelist', indices, ['name','id']])
+                .get(['namelist', indices, ['name','id', 'inYourList']])
                 .then(response => {
-                    resolve(response.json.namelist)
+                    var namelistObject = response.json.namelist;
+                    var namelist = Object.keys(namelistObject).filter(index => !isNaN(index))
+                        .map((index) => {return namelistObject[index]});
+                    resolve(namelist)
                 });
         });
     };
@@ -35,15 +34,22 @@ var NameModel = new function() {
     };
     
     this.add = (newName) => {
-        return model.call(['names', 'add'], [newName], ["name"])
+        return model.call(['namelist', 'add'], [newName], [["id"]])
+            .then(response => {
+                var addedObject = response.json.namelist[0];
+                if(addedObject)
+                    return Promise.resolve(addedObject.id);
+                else 
+                    return Promise.reject(Error('Id not retrieved. Please refresh the page'))
+            });
     };
     
-    this.edit = (position, editedName) => {
-        return model.setValue(['namelist', position, 'name'], editedName)
+    this.edit = (id, editedName) => {
+        return model.setValue(['namesById', id, 'name'], editedName)
     };
 
     this.delete = (id) => {
-        return model.call(['names', 'delete'], [id], ["id"])
+        return model.call(['namelist', 'delete'], [id], [], [["length"], [{from: 0, to: 15}, ['name','id', 'inYourList']]])
     };
 
 

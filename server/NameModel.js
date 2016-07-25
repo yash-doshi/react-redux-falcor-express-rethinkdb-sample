@@ -10,17 +10,15 @@ var r = require('rethinkdb');
 module.exports = {
     getLength: () => {
         return new Promise(function(resolve, reject) {
-            //Ignoring User context as of now
-            DBWrapper.getByKeyValuePair('namelist', 'userId', 101, function(isSuccess, result){
-                isSuccess ? resolve(result[0].nameIds.length) : reject(Error('DB Error'));
+            DBWrapper.getByAnything('names', {getOnlyCount: true}, function(isSuccess, result){
+                isSuccess ? resolve(result) : reject(Error('DB Error'));
             });
         } );
     },
-    customizedNameListForUser: (userId) => {
-        //Ignoring User context as of now
+    getNameList: () => {
         return new Promise(function(resolve, reject) {
-            DBWrapper.getByKeyValuePair('namelist', 'userId', 101, function(isSuccess, result){
-                isSuccess ? resolve(result[0].nameIds) : reject(Error('DB Error'));
+            DBWrapper.getByAnything('names', {pluck: ['id'], orderBy: 'id'}, function(isSuccess, result){
+                isSuccess ? resolve(result.map(name => name.id)) : reject(Error('DB Error'));
             });
         } );
     },
@@ -34,32 +32,32 @@ module.exports = {
     },
     
     // idNameObjects = [{id: 1, name: 'Alice'}, {id:203, name: 'Roger'}, ...]
-    updateNames: (idNameObjects) => {
+    update: (id, name, inYourList) => {
+        if(!name && !inYourList) return Promise.reject(Error('No values Passed'));
+        id = parseInt(id);
+        if(isNaN(id)) return Promise.reject(Error('Error in id'));
+        var updateObj = {};
+        if(name) updateObj['name'] = name;
+        if(inYourList != null) updateObj['inYourList'] = inYourList;
         return new Promise(function(resolve, reject) {
-            var results = [];
-            idNameObjects.forEach((idNameObject) =>{
-                var index = names.map(name => name.id).indexOf(parseInt(idNameObject.id));
-                if (index > -1) {
-                    names[index].name = idNameObject.name;
+            DBWrapper.updateSingle('names', id, updateObj,  function(isSuccess, result) {
+                if (isSuccess) {
+                    resolve(result)
                 } else {
-                    idNameObject.name = null;
+                    reject(Error('DB Error'));
                 }
-                results.push(idNameObject);
             });
-            resolve(results);
         } );
     },
     
     
     addName: (name) => {
         return new Promise(function(resolve, reject) {
-            var nameObject = { id: uuid.v4(), name: name };
+            var newId = Date.now();
+            var nameObject = { id: newId, name: name, inYourList: false };
             DBWrapper.insert('names', nameObject, function(isSuccess, result){
                 if(isSuccess){
-                    var updateObject = {nameIds: r.row("nameIds").append(nameObject.id)}
-                    DBWrapper.updateConditional('namelist', {userId: 101}, updateObject, function(isSuccess, innerResult){
-                        isSuccess ? resolve(result) : reject(Error('DB Error'));
-                    })
+                    resolve(newId)
                 } else {
                     reject(Error('DB Error'));
                 }
@@ -72,10 +70,7 @@ module.exports = {
         return new Promise(function(resolve, reject) {
             DBWrapper.delete('names', id, function(isSuccess, result){
                 if(isSuccess){
-                    var updateObject = {nameIds: r.row("nameIds").filter(innerId => {return innerId.ne(id)})};
-                    DBWrapper.updateConditional('namelist', {userId: 101}, updateObject, function(isSuccess, innerResult){
-                        isSuccess ? resolve(result) : reject(Error('DB Error'));
-                    })
+                    resolve(result)
                 } else {
                     reject(Error('DB Error'));
                 }

@@ -7,6 +7,10 @@ var $error = jsonGraph.error;
 
 var DBWrapper = require('./DBWrapper');
 
+var errorHandler = (err) => {
+    console.log(err);
+};
+
 var NamesRouter = Router.createClass([
     {
         route: 'namelist.length',
@@ -16,14 +20,14 @@ var NamesRouter = Router.createClass([
                 return {
                     path: ['namelist', 'length'], value: length
                 }
-            }, function(err){ /* Handle error */ })
+            }, errorHandler)
         }
     },
     {
         route: 'namelist[{integers:listIndices}]',
         get: (pathSet) => {
             console.log(JSON.stringify(pathSet));
-            return NameModel.customizedNameListForUser(undefined).then((ids) => {
+            return NameModel.getNameList(undefined).then((ids) => {
                 var pathValues = [];
                 pathSet.listIndices.forEach(function(index){
                     if(ids[index]){
@@ -34,11 +38,11 @@ var NamesRouter = Router.createClass([
                     }
                 });
                 return pathValues;
-            }, function(err){ /* Handle error */ });
+            }, errorHandler);
         }
     },
     {
-        route: 'namesById[{keys:nameIds}]["name", "id"]',
+        route: 'namesById[{keys:nameIds}]["name", "id", "inYourList"]',
         get: (pathSet) => {
             console.log(JSON.stringify(pathSet));
             var keys = pathSet[2];
@@ -69,42 +73,55 @@ var NamesRouter = Router.createClass([
                     }
                 });
                 return results;
-            }, function(err){ /* Handle error */ });
+            }, errorHandler);
         }
     },
     {
         route: 'namesById[{integers:ids}].name',
         set: (jsonGraphArg) => {
             console.log(JSON.stringify(jsonGraphArg));
-            console.log('Function not ready yet');
-            return [];
-            /*
-            idNameObjects = Object.keys(jsonGraphArg.namesById)
-                                    .map(id => { return { id: id, name: jsonGraphArg.namesById[id].name } });
-            return NameModel.updateNames(idNameObjects).then(result => {
-                return result.map(result => {
-                    return {
-                        path: ['namesById', result.id, 'name'], value: result.name
-                    }
-                });
-            }, function(err){ /!* Handle error *!/ });
-            */
+
+            var objects = Object.keys(jsonGraphArg.namesById)
+                .map(id => { return { id: id, name: jsonGraphArg.namesById[id].name } });
+            return objects.map((object) => {
+                return NameModel.update(object.id, object.name).then(()=> {
+                    return {path: ['namesById', object.id, 'name'], value: object.name};
+                }, errorHandler);
+            });
         }
     },
     {
-        route: 'names.add',
+        route: 'namesById[{integers:ids}].inYourList',
+        set: (jsonGraphArg) => {
+            console.log(JSON.stringify(jsonGraphArg));
+
+            var objects = Object.keys(jsonGraphArg.namesById)
+                .map(id => { return { id: id, inYourList: jsonGraphArg.namesById[id].name } });
+            return objects.forEach((object) => {
+                return NameModel.update(object.id, null, object.inYourList).then(()=> {
+                    return {path: ['namesById', object.id, 'inYourList'], value: object.inYourList};
+                }, errorHandler);
+            });
+        }
+    },
+    {
+        route: 'namelist.add',
         call: (callPath, args, pathSet) => {
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
             var newName = args[0];
-            return NameModel.addName(newName).then(() => {
-                return [
-                    { path: ['namelist', 'length'] }
-                ]
-            }, function(err){ /* Handle error */ });
+            return NameModel.addName(newName).then((newId) => {
+                return NameModel.getLength().then((length)=>{
+                    return [
+                        { path: ['namelist', 'length'], value: length },
+                        { path: ['namelist', {from:0 , to: length-1}], invalidated: true },
+                        { path: ['namelist', 0], value: $ref(['namesById', newId]) }
+                    ]
+                });
+            }, errorHandler);
         }
     },
     {
-        route: 'names.delete',
+        route: 'namelist.delete',
         call: (callPath, args, pathSet) => {
             console.log(JSON.stringify(callPath) + '||' + JSON.stringify(args) + '||' + JSON.stringify(pathSet));
             var id = args[0];
@@ -112,11 +129,11 @@ var NamesRouter = Router.createClass([
                 return NameModel.getLength().then(function(length){
                     return [
                         { path: ['namelist', 'length'], value: length },
-                        { path: ['namesById', id], invalidated: true },
-                        { path: ['namelist', {from: 0, to: length-1}], invalidated: true }
+                        { path: ['namelist', {from: 0, to: length-1}], invalidated: true },
+                        { path: ['namesById', id], invalidated: true }
                     ]
-                }, function(err){ /* Handle error */ });
-            }, function(err){ /* Handle error */ });
+                }, errorHandler);
+            }, errorHandler);
         }
     }
 ]);
